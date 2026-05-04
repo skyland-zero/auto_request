@@ -3,10 +3,8 @@ name: Request CLI Proxy API
 on:
   schedule:
     # GitHub Actions uses UTC time.
-    # Runs every 8 minutes continuously:
-    # 00:00, 00:08, ..., 00:56, 01:04, 01:12, ...
-    - cron: "0,8,16,24,32,40,48,56 0-23/2 * * *"
-    - cron: "4,12,20,28,36,44,52 1-23/2 * * *"
+    # Runs every 5 minutes.
+    - cron: "*/5 * * * *"
 
   workflow_dispatch:
 
@@ -18,8 +16,10 @@ jobs:
     steps:
       - name: Request URL
         run: |
+          date -u
           curl --fail --silent --show-error \
             --max-time 30 \
             --retry 3 \
             --retry-delay 5 \
+            --write-out "\nHTTP status: %{http_code}\n" \
             "https://cli-proxy-api-production-e468.up.railway.app"
